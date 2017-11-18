@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.gsw.smbms.dao.role.RoleMapper">
+
+	<!-- 增加角色 -->
+	<insert id="addRole" parameterType="Role">
+		INSERT INTO smbms_role(roleCode,roleName,createdBy,creationDate) VALUES(#{roleCode},#{roleName},#{createdBy},#{creationDate});
+	</insert>
+	
+	<!-- 修改角色 -->
+	<update id="modifyRole" parameterType="Map">
+		update smbms_role set roleCode=#{roleCode},roleName=#{roleName},modifyBy=#{modifyBy},modifyDate=#{modifyDate} where id=#{id}
+	</update>
+	
+	<!-- 删除角色 -->
+	<delete id="delRole"></delete>
+	
+	<!-- 查询角色信息 -->
+	<select id="getRoleListByRoleName" parameterType="String" resultType="Role">
+		select * from smbms_role where roleName like concat('%',#{roleName},'%')
+	</select>
+	
+	<update id="modifySet" parameterType="Role">
+		UPDATE smbms_role 
+		<set>
+			<if test="roleCode != null and roleCode != ''">
+				roleCode=#{roleCode},
+			</if>
+			<if test="roleName != null and roleName != ''">
+				roleName=#{roleName},
+			</if>
+			<if test="modifyBy != null and modifyBy != ''">
+				modifyBy=#{modifyBy},
+			</if>
+			<if test="modifyDate != null">
+				modifyDate=#{modifyDate},
+			</if>
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	
+	<select id="getRolesByRoleName" parameterType="Map" resultType="Role">
+		select * from smbms_role
+		<trim prefix="where" prefixOverrides="and|or">
+			and roleName like concat('%',#{roleName},'%')
+		</trim>
+		limit #{from},#{pageSize}
+	</select>
+</mapper>

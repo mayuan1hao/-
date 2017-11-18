@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.gsw.smbms.dao.provider.ProviderMapper">
+	<resultMap type="Bill" id="billList">
+		<id property="id" column="b_id"/>
+	</resultMap>
+	
+	<resultMap type="Provider" id="providerResult">
+		<id property="id" column="id"/>
+		<result property="proCode" column="proCode"/>
+		<collection property="billList" ofType="Bill" resultMap="billList"/>
+	</resultMap>
+	
+	<select id="getProviderById" parameterType="Integer" resultMap="providerResult">
+		SELECT p.*,b.id as b_id,b.productName,b.totalPrice,b.isPayment FROM smbms_provider p,smbms_bill b WHERE p.id=b.providerId and p.id=#{id}
+	</select>
+	
+	
+	<insert id="addProvider" parameterType="Provider">
+		INSERT INTO smbms_provider(proCode,proName,proDesc,proContact,proPhone,proAddress,proFax,createdBy,creationDate) 
+VALUES(#{proCode},#{proName},#{proDesc},#{proContact},#{proPhone},#{proAddress},#{proFax},#{createdBy},#{creationDate});
+	</insert>
+	
+	
+	<update id="modifyPsw">
+		UPDATE smbms_provider SET proPhone=#{proPhone} WHERE id=#{id};
+	</update>
+	
+	<update id="modifySet" parameterType="Provider">
+		UPDATE smbms_provider 
+		<set>
+			<if test="proName != null and proName != ''">
+				proName=#{proName},
+			</if>
+			<if test="proPhone != null and proPhone != ''">
+				proPhone=#{proPhone},
+			</if>
+		</set>
+		WHERE id=#{id};
+	</update>
+	
+	<update id="modifyTrim" parameterType="Provider">
+		UPDATE smbms_provider 
+		<trim prefix="set" suffixOverrides="," suffix="WHERE id=#{id};">
+			<if test="proName != null and proName != ''">
+				proName=#{proName},
+			</if>
+			<if test="proPhone != null and proPhone != ''">
+				proPhone=#{proPhone},
+			</if>
+		</trim>
+	</update>
+	
+	<delete id="delProvider" parameterType="Integer">
+		DELETE FROM smbms_provider WHERE id=#{id}
+	</delete>
+</mapper>
